@@ -49,6 +49,8 @@ dependencies {
   // Logging
   implementation dependenciesList.timber
 
+  implementation 'com.google.code.gson:gson:2.8.5'
+
   // AutoValues
   annotationProcessor dependenciesList.autoValue
   compileOnly dependenciesList.autoValue
