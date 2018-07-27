@@ -127,14 +127,11 @@ public class NavigationView extends CoordinatorLayout implements LifecycleObserv
    * @param outState to store state variables
    */
   public void onSaveInstanceState(Bundle outState) {
-    if (summaryBehavior != null) {
-      outState.putInt(getContext().getString(R.string.bottom_sheet_state), summaryBehavior.getState());
-    }
-    outState.putBoolean(getContext().getString(R.string.recenter_btn_visible),
-      recenterBtn.getVisibility() == View.VISIBLE);
-    outState.putBoolean(getContext().getString(R.string.navigation_running), navigationViewModel.isRunning());
-    outState.putBoolean(getContext().getString(R.string.instruction_view_visible),
-      instructionView.isShowingInstructionList());
+    InstanceState instanceState = new InstanceState(summaryBehavior, recenterBtn.getVisibility(),
+      navigationViewModel.isRunning(), instructionView.isShowingInstructionList());
+
+    outState.putParcelable(getContext().getString(R.string.instance_state), instanceState);
+
     mapView.onSaveInstanceState(outState);
   }
 
@@ -146,13 +143,12 @@ public class NavigationView extends CoordinatorLayout implements LifecycleObserv
    * @param savedInstanceState to extract state variables
    */
   public void onRestoreInstanceState(Bundle savedInstanceState) {
-    boolean isVisible = savedInstanceState.getBoolean(getContext().getString(R.string.recenter_btn_visible));
-    recenterBtn.setVisibility(isVisible ? View.VISIBLE : View.INVISIBLE);
-    int bottomSheetState = savedInstanceState.getInt(getContext().getString(R.string.bottom_sheet_state));
-    resetBottomSheetState(bottomSheetState);
-    boolean instructionViewVisible = savedInstanceState.getBoolean(getContext().getString(
-      R.string.instruction_view_visible));
-    updateInstructionListState(instructionViewVisible);
+    InstanceState instanceState = savedInstanceState.getParcelable(
+      getContext().getString(R.string.instance_state));
+
+    recenterBtn.setVisibility(instanceState.recenterButtonVisibility);
+    resetBottomSheetState(instanceState.bottomSheetBehaviorState);
+    updateInstructionListState(instanceState.instructionViewVisible);
   }
 
   /**
